@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>Astrea mini</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0b1530;
+      color: #ffffff;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .app-shell {
+      max-width: 520px;
+      margin: 40px auto;
+      background: #111d3a;
+      padding: 20px;
+      border-radius: 16px;
+    }
+    .screen { display: none; }
+    .screen.is-active { display: block; }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 999px;
+      border: none;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    .btn.primary {
+      background: #4da3ff;
+      color: #fff;
+    }
+    .btn.ghost {
+      background: transparent;
+      border: 1px solid #4da3ff;
+      color: #4da3ff;
+    }
+    .card {
+      background: #162544;
+      padding: 16px;
+      border-radius: 12px;
+      margin-top: 12px;
+    }
+    .field {
+      display: block;
+      margin-bottom: 12px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 6px;
+      border-radius: 8px;
+      border: none;
+      margin-top: 4px;
+      font-family: inherit;
+    }
+    .result-box {
+      background: #1d2e56;
+      padding: 16px;
+      border-radius: 12px;
+      margin: 12px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app-shell">
+    <h1>Astrea mini</h1>
+
+    <main>
+      <!-- ホーム -->
+      <section id="screen-home" class="screen is-active">
+        <p>今日の迷いをアステリアに相談してみませんか？</p>
+        <button id="go-input" class="btn primary">今日の迷いを相談する</button>
+      </section>
+
+      <!-- 入力 -->
+      <section id="screen-input" class="screen">
+        <h2>今日の迷い</h2>
+        <form id="decision-form" class="card">
+          <label class="field">
+            <span>目標</span>
+            <input id="goal" type="text" required />
+          </label>
+          <label class="field">
+            <span>迷っている要因</span>
+            <textarea id="reason" rows="3" required></textarea>
+          </label>
+          <label class="field">
+            <span>期間</span>
+            <select id="period">
+              <option value="today">今日だけ</option>
+              <option value="week">今週</option>
+              <option value="month">今月</option>
+            </select>
+          </label>
+
+          <button type="submit" class="btn primary">天秤にかける</button>
+        </form>
+
+        <button id="back-home" class="btn ghost">ホームに戻る</button>
+      </section>
+
+      <!-- 結果 -->
+      <section id="screen-result" class="screen">
+        <h2>アステリアの判定</h2>
+        <div class="result-box">
+          <p><strong>目標：</strong><span id="result-goal"></span></p>
+          <p><strong>迷い：</strong><span id="result-reason"></span></p>
+          <p><strong>期間：</strong><span id="result-period"></span></p>
+          <p><strong>判定結果：</strong><span id="result-final"></span></p>
+        </div>
+        <button id="again" class="btn primary">もう一度相談する</button>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    // 画面切り替え
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach((sc) => {
+        sc.classList.remove("is-active");
+      });
+      document.getElementById(id).classList.add("is-active");
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // テスト：JSが読めているか確認
+      console.log("Astrea mini JS loaded"); // 開発用ログ
+
+      const homeBtn = document.getElementById("go-input");
+      const backBtn = document.getElementById("back-home");
+      const againBtn = document.getElementById("again");
+      const form = document.getElementById("decision-form");
+
+      // ホーム → 入力
+      homeBtn.addEventListener("click", () => {
+        showScreen("screen-input");
+      });
+
+      // 入力 → ホーム
+      backBtn.addEventListener("click", () => {
+        showScreen("screen-home");
+      });
+
+      // 結果 → ホーム
+      againBtn.addEventListener("click", () => {
+        showScreen("screen-home");
+      });
+
+      // フォーム送信
+      form.addEventListener("submit", (e) => {
+        e.preventDefault(); // これで画面リロードを防ぐ
+
+        const goal = document.getElementById("goal").value.trim();
+        const reason = document.getElementById("reason").value.trim();
+        const period = document.getElementById("period").value;
+
+        document.getElementById("result-goal").textContent = goal;
+        document.getElementById("result-reason").textContent = reason;
+        document.getElementById("result-period").textContent =
+          period === "today" ? "今日だけ" :
+          period === "week" ? "今週" : "今月";
+
+        const winner = Math.random() > 0.5 ? "目標" : "迷い";
+        document.getElementById("result-final").textContent = winner;
+
+        showScreen("screen-result");
+      });
+    });
+  </script>
+</body>
+</html>
